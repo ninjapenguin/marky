@@ -59,10 +59,46 @@ fn main() {
     }
 
     println!("Generated");
-    println!("{}", format!("{:?}", chain.get(&(("in", "all"))).unwrap().get(0)));
+    //println!("{}", format!("{:?}", chain.get(&(("in", "all"))).unwrap().get(0)));
     let mut rng = rand::thread_rng();
-    let ran = rng.gen_range(0,5);
-    println!("Random: {}", ran);
+    //let ran = rng.gen_range(0,5);
+    //println!("Random: {}", ran);
+
+    // Run the chain
+    let mut target = "Alice was".to_string();
+
+    let mut sword_1 = "Alice";
+    let mut sword_2 = "was";
+    let mut counter: i32 = 0;
+    loop {
+        match chain.get(&(sword_1, sword_2)) {
+            Some(ref v) => {
+
+                // pick an entry from this vector
+                let tot = v.len();
+                let indeces = rng.gen_range(0,tot);
+                let picked_option = v.get(indeces);
+                let picked = picked_option.unwrap();
+
+                target = format!("{} {}", target, picked);
+                sword_1 = sword_2;
+                sword_2 = picked;
+            },
+            None => {
+                println!("Missed");
+                break;
+            }
+        };
+
+        counter += 1;
+        if counter > 15 {
+            break;
+        }
+    }
+
+
+    println!("===========\n");
+    println!("{}", target);
 
 //    hm.insert(("one","two"), "three");
 //    match hm.get(&(("in", "all"))) {
