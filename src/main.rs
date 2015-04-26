@@ -100,20 +100,4 @@ fn main() {
     println!("===========\n");
     println!("{}", target);
 
-//    hm.insert(("one","two"), "three");
-//    match hm.get(&(("in", "all"))) {
-//        Some(&name) => println!("== {}", name),
-//        _ => println!("Nope"),
-//    };
-
-
-//            match hm.get(&((last, last_plus))) {
-//                Some(ref mut v) => v.push(word),
-//                _ => {
-//                    let mut v: Vec<&str> = Vec::new();
-//                    v.push(word);
-//                   hm.insert((last, last_plus),v);
-//                }
-//            };
-
 }
