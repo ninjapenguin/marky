@@ -40,7 +40,7 @@ fn parse_file(file_path: &str) -> String {
         Ok(_) => print!("File Read.."),
     };
 
-    // `file` goes out of scope, and the "hello.txt" file gets closed
+    // `file` goes out of scope, and gets closed
     s
 }
 
@@ -113,7 +113,7 @@ fn main() {
         };
 
         counter += 1;
-        if counter > 30 {
+        if counter > 50 {
             break;
         }
     }
