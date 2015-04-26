@@ -1,3 +1,15 @@
+// Test script to generate a markov chain from Alice in Wonderland using Rust
+//
+// Marcov Chain takes form of
+//
+//   {
+//       (&str, &str) => Vec<&str>,
+//       ("word1", "word2") => ["word", "word", "word"...]
+//       ...
+//   }
+//
+//  matt <matt@ninjapenguin.co.uk>
+
 extern crate rand;
 
 use std::error::Error;
@@ -10,10 +22,8 @@ use std::collections::hash_map::Entry::{Occupied, Vacant};
 
 use rand::Rng;
 
-fn main() {
-    // Generate the markov chain by parsing the corpus
-
-    let path = Path::new("/tmp/alice29.txt");
+fn parse_file(file_path: &str) -> String {
+    let path = Path::new(file_path);
     let display = path.display();
 
     // Open the path in read-only mode, returns `io::Result<File>`
@@ -31,6 +41,12 @@ fn main() {
     };
 
     // `file` goes out of scope, and the "hello.txt" file gets closed
+    s
+}
+
+fn main() {
+    // Generate the markov chain by parsing the corpus
+    let s = parse_file("/tmp/alice29.txt");
 
     println!("Generating chain");
 
@@ -58,7 +74,7 @@ fn main() {
 
     }
 
-    println!("Generated");
+    println!("Markov Chain Generated");
     //println!("{}", format!("{:?}", chain.get(&(("in", "all"))).unwrap().get(0)));
     let mut rng = rand::thread_rng();
     //let ran = rng.gen_range(0,5);
@@ -83,6 +99,12 @@ fn main() {
                 target = format!("{} {}", target, picked);
                 sword_1 = sword_2;
                 sword_2 = picked;
+
+                // if the current state ends with punctuation, terminate
+                if picked.contains(".") {
+                    println!("Breaking on punctuation");
+                    break;
+                }
             },
             None => {
                 println!("Missed");
@@ -91,7 +113,7 @@ fn main() {
         };
 
         counter += 1;
-        if counter > 15 {
+        if counter > 30 {
             break;
         }
     }
