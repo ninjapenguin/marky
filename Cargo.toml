@@ -1,0 +1,7 @@
+[package]
+name = "markov"
+version = "0.1.0"
+authors = ["Matt Wells <matt.wells@performancehorizon.com>"]
+
+[dependencies]
+rand = "0.3"
