@@ -71,29 +71,14 @@ fn build_chain<'a>(corpus: &'a str) -> HashMap<(&'a str, &'a str), Vec<&'a str>>
     chain
 }
 
-fn main() {
-
-    let args: Vec<String> = env::args().collect();
-    //let config = parse_config(&args);
-    let config = Config::new(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {}", err);
-        process::exit(1);
-    });
-
-    // Generate the markov chain by parsing the corpus
-    let s = parse_file(&config.filename);
-
-    println!("Generating chain from {}", config.filename);
-    let chain = build_chain(s.as_str());
-    println!("Markov Chain Generated");
+fn run_chain<'a>(chain: HashMap<(&str, &str), Vec<&str>>, config: Config) -> String {
 
     let mut rng = rand::thread_rng();
 
-    // Run the chain
-    let mut target = format!("{} {}", config.first_seed, config.second_seed);
-
     let mut sword_1 = &*config.first_seed;
     let mut sword_2 = &*config.second_seed;
+    let mut target = format!("{} {}", sword_1, sword_2);
+
     let mut counter: i32 = 0;
     loop {
         match chain.get(&(sword_1, sword_2)) {
@@ -126,7 +111,27 @@ fn main() {
             break;
         }
     }
+    target
+}
 
+fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    //let config = parse_config(&args);
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
+
+    // Generate the markov chain by parsing the corpus
+    let s = parse_file(&config.filename);
+
+    println!("Generating chain from {}", config.filename);
+    let chain = build_chain(s.as_str());
+    println!("Markov Chain Generated");
+
+    // Run the chain
+    let target = run_chain(chain, config);
 
     println!("===========\n");
     println!("{}", target);
