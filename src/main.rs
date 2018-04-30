@@ -95,7 +95,7 @@ fn run_chain<'a>(chain: HashMap<(&str, &str), Vec<&str>>, config: Config) -> Str
                 sword_2 = picked;
 
                 // if the current state ends with punctuation, terminate
-                if picked.contains(".") {
+                if picked.contains(".") || picked.contains("!") {
                     println!("Breaking on punctuation");
                     break;
                 }
