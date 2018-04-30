@@ -9,9 +9,9 @@
 //   }
 //
 //  matt <matt@ninjapenguin.co.uk>
-
 extern crate rand;
 
+use std::env;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
@@ -40,17 +40,21 @@ fn parse_file(file_path: &str) -> String {
         Ok(_) => print!("File Read.."),
     };
 
-    // `file` goes out of scope, and gets closed
     s
 }
 
 fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    let config = parse_config(&args);
+
     // Generate the markov chain by parsing the corpus
-    let s = parse_file("/tmp/alice29.txt");
+    let s = parse_file(&config.filename);
 
-    println!("Generating chain");
+    println!("Generating chain from {}", config.filename);
 
-    let mut chain = HashMap::new();
+    //let mut chain = HashMap::new();
+    let mut chain: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
 
     let mut last: &str = "";
     let mut last_plus: &str = "";
@@ -75,16 +79,13 @@ fn main() {
     }
 
     println!("Markov Chain Generated");
-    //println!("{}", format!("{:?}", chain.get(&(("in", "all"))).unwrap().get(0)));
     let mut rng = rand::thread_rng();
-    //let ran = rng.gen_range(0,5);
-    //println!("Random: {}", ran);
 
     // Run the chain
-    let mut target = "Alice was".to_string();
+    let mut target = "Alice tried".to_string();
 
     let mut sword_1 = "Alice";
-    let mut sword_2 = "was";
+    let mut sword_2 = "tried";
     let mut counter: i32 = 0;
     loop {
         match chain.get(&(sword_1, sword_2)) {
@@ -122,4 +123,13 @@ fn main() {
     println!("===========\n");
     println!("{}", target);
 
+}
+
+struct Config {
+    filename: String,
+}
+
+fn parse_config(args: &[String]) -> Config {
+    let filename = args[1].clone();
+    Config { filename }
 }
