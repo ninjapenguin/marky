@@ -90,7 +90,7 @@ fn run_chain<'a>(chain: HashMap<(&str, &str), Vec<&str>>, config: Config) -> Str
                 let picked_option = v.get(indeces);
                 let picked = picked_option.unwrap();
 
-                target = format!("{} {}", target, picked);
+                target = target + " " + picked;
                 sword_1 = sword_2;
                 sword_2 = picked;
 
