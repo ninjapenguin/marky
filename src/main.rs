@@ -43,23 +43,13 @@ fn parse_file(file_path: &str) -> String {
     s
 }
 
-fn main() {
-
-    let args: Vec<String> = env::args().collect();
-    let config = parse_config(&args);
-
-    // Generate the markov chain by parsing the corpus
-    let s = parse_file(&config.filename);
-
-    println!("Generating chain from {}", config.filename);
-
-    //let mut chain = HashMap::new();
+fn build_chain<'a>(corpus: &'a str) -> HashMap<(&'a str, &'a str), Vec<&'a str>> {
     let mut chain: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
 
     let mut last: &str = "";
     let mut last_plus: &str = "";
 
-    for word in s.split_whitespace() {
+    for word in corpus.split_whitespace() {
 
         if word.is_empty() {
             break;
@@ -77,6 +67,22 @@ fn main() {
         last = word;
 
     }
+    chain
+}
+
+fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    let config = parse_config(&args);
+
+    // Generate the markov chain by parsing the corpus
+    let s = parse_file(&config.filename);
+
+    println!("Generating chain from {}", config.filename);
+
+    //let mut chain = HashMap::new();
+    //let mut chain: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
+    let chain = build_chain(s.as_str());
 
     println!("Markov Chain Generated");
     let mut rng = rand::thread_rng();
