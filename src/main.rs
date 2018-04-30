@@ -16,6 +16,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::process;
 
 use std::collections::HashMap;
 use std::collections::hash_map::Entry::{Occupied, Vacant};
@@ -73,25 +74,26 @@ fn build_chain<'a>(corpus: &'a str) -> HashMap<(&'a str, &'a str), Vec<&'a str>>
 fn main() {
 
     let args: Vec<String> = env::args().collect();
-    let config = parse_config(&args);
+    //let config = parse_config(&args);
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
 
     // Generate the markov chain by parsing the corpus
     let s = parse_file(&config.filename);
 
     println!("Generating chain from {}", config.filename);
-
-    //let mut chain = HashMap::new();
-    //let mut chain: HashMap<(&str, &str), Vec<&str>> = HashMap::new();
     let chain = build_chain(s.as_str());
-
     println!("Markov Chain Generated");
+
     let mut rng = rand::thread_rng();
 
     // Run the chain
-    let mut target = "Alice tried".to_string();
+    let mut target = format!("{} {}", config.first_seed, config.second_seed);
 
-    let mut sword_1 = "Alice";
-    let mut sword_2 = "tried";
+    let mut sword_1 = &*config.first_seed;
+    let mut sword_2 = &*config.second_seed;
     let mut counter: i32 = 0;
     loop {
         match chain.get(&(sword_1, sword_2)) {
@@ -131,11 +133,25 @@ fn main() {
 
 }
 
+
 struct Config {
     filename: String,
+    first_seed: String,
+    second_seed: String
 }
 
-fn parse_config(args: &[String]) -> Config {
-    let filename = args[1].clone();
-    Config { filename }
+impl Config {
+
+    fn new(args: &[String]) -> Result<Config, &'static str> {
+
+        if args.len() < 4 {
+            return Err("Not enough arguments")
+        }
+
+        let filename = args[1].clone();
+        let first_seed = args[2].clone();
+        let second_seed = args[3].clone();
+
+        Ok(Config { filename, first_seed, second_seed } )
+    }
 }
